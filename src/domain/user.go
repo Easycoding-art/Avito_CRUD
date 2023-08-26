@@ -1,6 +1,6 @@
 package domain
 
 type User struct {
-	ID   int    `json:"id" gorm:"primary_key"`
-	Name string `json:"name"`
+	ID   string   `json:"id" gorm:"primary_key"`
+	Data []string `json:"data"`
 }

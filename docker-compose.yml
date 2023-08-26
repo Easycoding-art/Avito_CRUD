@@ -1,0 +1,63 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: full_app
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    depends_on:
+      - myDbPostgres
+    volumes:
+      - api:/usr/src/app/
+    networks:
+      - fullstack
+    environment:
+      connStr: "host=myDbPostgres user=MyDbUser password=pass dbname=MyDb port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+      waitTime: "120s"
+
+  myDbPostgres:
+    image: postgres:latest
+    container_name: myDb
+    environment:
+      POSTGRES_DB: MyDb
+      POSTGRES_USER: MyDbUser
+      POSTGRES_PASSWORD: pass
+    ports:
+      - '5432:5432'
+    volumes:
+      - myDbPostgres:/var/lib/postgresql/data
+    networks:
+      - fullstack
+
+  migrate:
+    image: migrate/migrate
+    networks:
+      - fullstack
+    volumes:
+      - ./migrations:/migrations
+    command:
+      [
+        "-path",
+        "/migrations",
+        "-database",
+        "postgres://MyDbUser:pass@myDb:5432/MyDb?sslmode=disable",
+        "up"
+      ]
+    links:
+      - myDbPostgres:db
+    depends_on:
+      - myDbPostgres
+    restart: on-failure
+
+volumes:
+  api:
+  myDbPostgres:
+  migrate:
+
+
+networks:
+  fullstack:
+    driver: bridge
