@@ -11,7 +11,7 @@ services:
     depends_on:
       - myDbPostgres
     volumes:
-      - api:/usr/src/app/
+      - api:/usr/internal/app/
     networks:
       - fullstack
     environment:

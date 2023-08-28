@@ -1,7 +1,7 @@
 package infrastructure
 
 import (
-	controllers "Avito_CRUD/src/interfaces/api"
+	controllers "Avito_CRUD/internal/interfaces/api"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -22,6 +22,10 @@ func Init() {
 		userController.Create(c)
 		return c.String(http.StatusOK, "created")
 	})
+
+	e.PUT("/users/:id", func(c echo.Context) error {
+		
+	}
 
 	e.DELETE("/users/:id", func(c echo.Context) error {
 		id := c.Param("id")

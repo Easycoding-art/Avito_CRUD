@@ -4,8 +4,8 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
-	"Avito_CRUD/src/domain"
-	"Avito_CRUD/src/interfaces/database"
+	"Avito_CRUD/internal/domain"
+	"Avito_CRUD/internal/interfaces/database"
 )
 
 type SqlHandler struct {
