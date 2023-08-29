@@ -14,3 +14,21 @@ services:
       MYSQL_DATABASE: avito_crud
       MYSQL_ROOT_PASSWORD: password
       TZ: "Asia/Tokyo"
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: my_app
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    depends_on:
+      - db
+    #volumes:
+    #  - api:/usr/src/app/
+    #networks:
+    # - fullstack
+    environment:
+      connStr: "host=db password=pass dbname=avito_crud port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+      waitTime: "120s"
+

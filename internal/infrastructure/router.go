@@ -22,11 +22,12 @@ func Init() {
 		userController.Create(c)
 		return c.String(http.StatusOK, "created")
 	})
-	/*
-		e.PUT("/users/:id", func(c echo.Context) error {
 
-		}
-	*/
+	e.PUT("/users/:id", func(c echo.Context) error {
+		userController.Update(c)
+		return c.String(http.StatusOK, "updated")
+	})
+
 	e.DELETE("/users/:id", func(c echo.Context) error {
 		id := c.Param("id")
 		userController.Delete(id)

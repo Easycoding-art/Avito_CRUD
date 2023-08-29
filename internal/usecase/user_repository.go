@@ -9,5 +9,4 @@ type UserRepository interface {
 	Select() []domain.User
 	Delete(id string)
 	UpdateUser(id string, data_add []string, data_delete []string)
-	//UpdateUsersByPercent(data_add []string, data_delete []string, percent float64)
 }

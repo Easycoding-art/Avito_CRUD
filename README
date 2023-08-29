@@ -1,6 +1,8 @@
 ВНИМАНИЕ!!! Я начал учить Golang всего пару недель назад. Не судите строго)))
 
 Для запуска используйте docker-compose up
-Адрес локального сервера "http://localhost:1323"
+Адрес локального сервера "http://localhost:8080"
 
 Curl-запросы:
+1) POST
+-X POST -d '{"\id\": "\1\", "\data\": ["\value1\", "\value2\"]}' -k -H "Content-Type: application/json" http://localhost:8080/users
