@@ -1,63 +1,16 @@
-version: '3'
+version: "3.6"
 services:
-  app:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    container_name: full_app
+  db:
+    image: mysql:5.7
+    container_name: avito_crud
+    volumes:
+      # настройки mysql
+      - ./mysql/conf:/etc/mysql/conf.d
+      - ./mysql/data:/var/lib/mysql
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
-      - "8080:8080"
-    restart: on-failure
-    depends_on:
-      - myDbPostgres
-    volumes:
-      - api:/usr/internal/app/
-    networks:
-      - fullstack
+      - 3306:3306
     environment:
-      connStr: "host=myDbPostgres user=MyDbUser password=pass dbname=MyDb port=5432 sslmode=disable TimeZone=Asia/Shanghai"
-      waitTime: "120s"
-
-  myDbPostgres:
-    image: postgres:latest
-    container_name: myDb
-    environment:
-      POSTGRES_DB: MyDb
-      POSTGRES_USER: MyDbUser
-      POSTGRES_PASSWORD: pass
-    ports:
-      - '5432:5432'
-    volumes:
-      - myDbPostgres:/var/lib/postgresql/data
-    networks:
-      - fullstack
-
-  migrate:
-    image: migrate/migrate
-    networks:
-      - fullstack
-    volumes:
-      - ./migrations:/migrations
-    command:
-      [
-        "-path",
-        "/migrations",
-        "-database",
-        "postgres://MyDbUser:pass@myDb:5432/MyDb?sslmode=disable",
-        "up"
-      ]
-    links:
-      - myDbPostgres:db
-    depends_on:
-      - myDbPostgres
-    restart: on-failure
-
-volumes:
-  api:
-  myDbPostgres:
-  migrate:
-
-
-networks:
-  fullstack:
-    driver: bridge
+      MYSQL_DATABASE: avito_crud
+      MYSQL_ROOT_PASSWORD: password
+      TZ: "Asia/Tokyo"

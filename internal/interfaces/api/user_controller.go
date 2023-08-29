@@ -15,9 +15,10 @@ type UserController struct {
 	Interactor usecase.UserInteractor
 }
 
-type ByPercent struct {
-	Data    []string
-	Percent float64
+type Request struct {
+	ID         string
+	DataAdd    []string
+	DataDelete []string
 }
 
 func NewUserController(sqlHandler database.SqlHandler) *UserController {
@@ -39,9 +40,20 @@ func (controller *UserController) Create(c echo.Context) {
 	return
 }
 
-func (controller *UserController) GetUser() []domain.User {
-	res := controller.Interactor.GetInfo()
-	return res
+func (controller *UserController) GetUser(c echo.Context) []domain.User {
+	results := controller.Interactor.GetInfo()
+	id := c.QueryParam("id")
+	var res []string
+	for i := range results {
+		if results[i].ID == id {
+			res = results[i].Data
+			break
+		}
+	}
+	var user domain.User = domain.User{ID: id, Data: res}
+
+	c.JSON(201, user)
+	return nil
 }
 
 func (controller *UserController) Delete(id string) {
@@ -52,15 +64,17 @@ func (controller *UserController) Update(c echo.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var user domain.User
-	err2 := json.Unmarshal(jsonData, &user)
+	var data Request
+	err2 := json.Unmarshal(jsonData, &data)
 
 	if err2 != nil {
 
 		log.Fatal(err2)
 	}
-	controller.Interactor.Update(user.ID, user.Data)
+	controller.Interactor.Update(data.ID, data.DataAdd, data.DataDelete)
 }
+
+/*
 func (controller *UserController) UpdateByPercent(c echo.Context) {
 	jsonData, err := io.ReadAll(c.Request().Body)
 	if err != nil {
@@ -76,3 +90,4 @@ func (controller *UserController) UpdateByPercent(c echo.Context) {
 	controller.Interactor.UpdateByPercent(req.Data, req.Percent)
 
 }
+*/

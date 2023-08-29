@@ -13,7 +13,7 @@ func Init() {
 	userController := controllers.NewUserController(NewSqlHandler())
 
 	e.GET("/users", func(c echo.Context) error {
-		users := userController.GetUser()
+		users := userController.GetUser(c)
 		c.Bind(&users)
 		return c.JSON(http.StatusOK, users)
 	})
@@ -22,11 +22,11 @@ func Init() {
 		userController.Create(c)
 		return c.String(http.StatusOK, "created")
 	})
+	/*
+		e.PUT("/users/:id", func(c echo.Context) error {
 
-	e.PUT("/users/:id", func(c echo.Context) error {
-		
-	}
-
+		}
+	*/
 	e.DELETE("/users/:id", func(c echo.Context) error {
 		id := c.Param("id")
 		userController.Delete(id)

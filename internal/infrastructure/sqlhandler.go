@@ -1,11 +1,13 @@
 package infrastructure
 
 import (
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-
 	"Avito_CRUD/internal/domain"
 	"Avito_CRUD/internal/interfaces/database"
+
+	"golang.org/x/exp/slices"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 type SqlHandler struct {
@@ -35,12 +37,32 @@ func (handler *SqlHandler) DeleteById(obj interface{}, id string) {
 	handler.db.Delete(obj, id)
 }
 
-func (handler *SqlHandler) Update(obj interface{}, id string, data []string) {
-	user := domain.User{ID: id, Data: data}
-	handler.db.Save(&user)
+func (handler *SqlHandler) Update(obj interface{}, id string, data_add []string, data_delete []string) {
+	rows, _ := handler.db.Select("id", "data").Rows() // (*sql.Rows, error)
+	defer rows.Close()
+
+	var user domain.User
+	var data []string = make([]string, 0)
+	for rows.Next() {
+		// ScanRows сканирует строку в user
+		handler.db.ScanRows(rows, &user)
+		if user.ID == id {
+			for i := range user.Data {
+				if !(slices.Contains(data_delete, user.Data[i])) {
+					data = append(data, user.Data[i])
+				}
+			}
+			break
+		}
+	}
+	var data_real = append(data, data_add...)
+	user_real := domain.User{ID: id, Data: data_real}
+	handler.db.Save(&user_real)
 }
-func (handler *SqlHandler) UpdateByPercent(obj interface{}, data []string, percent float64) {
-	rows, _ := handler.db.Select("name, age, email").Rows() // (*sql.Rows, error)
+
+/*
+func (handler *SqlHandler) UpdateByPercent(obj interface{}, data_add []string, data_delete []string, percent float64) {
+	rows, _ := handler.db.Select("id", "data").Rows() // (*sql.Rows, error)
 	defer rows.Close()
 
 	var user domain.User
@@ -60,3 +82,4 @@ func (handler *SqlHandler) UpdateByPercent(obj interface{}, data []string, perce
 	}
 
 }
+*/
