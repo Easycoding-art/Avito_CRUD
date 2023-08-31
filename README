@@ -5,4 +5,20 @@
 
 Curl-запросы:
 1) POST
--X POST -d '{"\id\": "\1\", "\data\": ["\value1\", "\value2\"]}' -k -H "Content-Type: application/json" http://localhost:8080/users
+curl -X POST -d '{"id":"1","data":["value1","value2"]}' -k -H "Content-Type: application/json" http://localhost:8080/users
+
+2) GET
+curl -X GET -d '{"id":"1","data":["value1","value2"]}' -k -H "Content-Type: application/json" http://localhost:8080/users
+
+3) PUT
+curl -X PUT -d '{"id":"1","data":["value1","value2"]}' -k -H "Content-Type: application/json" http://localhost:8080/users/1
+
+4) DELETE
+curl -X DELETE -d '{"id":"1","data":["value1","value2"]}' -k -H "Content-Type: application/json" http://localhost:8080/users/1
+
+Не успел добавить автоматическое добавление сегмента. Я бы реализовал это через добавление
+еще одной таблицы в базу данных. с полями slug и percent. Дальше при каждом вызове функции
+Update находилось количество пользователей(включая добавляемого) входящих в процент и
+количество пользователей, уже имеющих сегмент. Потом между этими значениями находится
+разница и недостающим пользователям(включая добавляемого) записывают сегмент. Таким образом,
+Процентное соотношение добавленных и не добавленных пользователей сохраняется.
